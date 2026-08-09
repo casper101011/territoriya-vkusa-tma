@@ -7,39 +7,46 @@
     <!-- Подключаем Telegram WebApp -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
-        .form-input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .submit-btn { width: 100%; padding: 15px; background: #2678b6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; background: #f4f4f9; }
+        h2 { text-align: center; color: #333; }
+        .form-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .submit-btn { width: 100%; padding: 15px; background: #2678b6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .submit-btn:active { background: #1f5e8e; }
     </style>
 </head>
 <body>
 
     <h2>Оставить отзыв</h2>
+    
+    <!-- Поля для заполнения -->
     <input type="text" id="fb-name" class="form-input" placeholder="Введите ваше имя" required>
     <input type="tel" id="fb-phone" class="form-input" placeholder="Введите номер телефона">
     <textarea id="fb-msg" class="form-input" rows="4" placeholder="Ваш отзыв"></textarea>
+    
+    <!-- Кнопка -->
     <button class="submit-btn" onclick="sendFeedback()">Отправить отзыв</button>
 
     <script>
-        // Инициализация Telegram
+        // Инициализация Telegram Mini App
         let tg = window.Telegram.WebApp;
         tg.expand();
 
         async function sendFeedback() {
-            // 1. Получаем данные
+            // 1. Получаем значения из полей
             const name = document.getElementById('fb-name').value;
             const phone = document.getElementById('fb-phone').value;
             const message = document.getElementById('fb-msg').value;
 
-            // --- ВСТАВЬ СЮДА СВОЙ URL ИЗ MAKE ---
-            const webhookUrl = 'ВСТАВЬ_СЮДА_URL_ИЗ_MAKE'; 
-            // ------------------------------------
+            // Твой URL (я его уже вставил)
+            const webhookUrl = 'https://hook.us2.make.com/gptcvb93lmeg8iyyleh852nrup6zbu0v'; 
 
-            if (!name) {
-                alert('Пожалуйста, введите имя!');
+            // Проверка: имя обязательно
+            if (!name.trim()) {
+                alert('Пожалуйста, введите ваше имя!');
                 return;
             }
 
+            // Данные для отправки
             const payload = {
                 name: name,
                 phone: phone || 'Не указан',
@@ -47,6 +54,7 @@
                 date: new Date().toLocaleString('ru-RU')
             };
 
+            // Отправка в Make
             try {
                 const response = await fetch(webhookUrl, {
                     method: 'POST',
@@ -55,15 +63,16 @@
                 });
 
                 if (response.ok) {
-                    alert('Спасибо! Ваш отзыв отправлен.');
+                    alert('Спасибо! Ваш отзыв успешно отправлен.');
+                    // Очистка формы
                     document.getElementById('fb-name').value = '';
                     document.getElementById('fb-phone').value = '';
                     document.getElementById('fb-msg').value = '';
                 } else {
-                    alert('Ошибка отправки. Проверьте URL.');
+                    alert('Ошибка при отправке данных на сервер.');
                 }
             } catch (error) {
-                alert('Ошибка соединения.');
+                alert('Ошибка соединения. Проверьте интернет.');
             }
         }
     </script>
