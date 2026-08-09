@@ -18,6 +18,7 @@ export default {
         if (!message) return json({ ok: false, error: 'Введите текст отзыва.' }, 400, corsHeaders);
         if (!env.BOT_TOKEN) return json({ ok: false, error: 'Сервер ещё не настроен.' }, 500, corsHeaders);
         if (!env.CHAT_ID) return json({ ok: false, error: 'CHAT_ID не настроен.' }, 500, corsHeaders);
+
         let userName = 'Не определено';
         let userUsername = 'нет username';
         const initData = typeof body.initData === 'string' ? body.initData : '';
@@ -32,12 +33,29 @@ export default {
             } catch (_) {}
           }
         }
-        const text = ['📩 НОВЫЙ ОТЗЫВ', '', `👤 Имя: ${name || 'Не указано'}`, `📞 Телефон: ${phone || 'Не указан'}`, `📱 Telegram: ${userName} (${userUsername})`, '', '💬 Отзыв:', message].join('\n');
+
+        const text = [
+          '📩 НОВЫЙ ОТЗЫВ',
+          '',
+          `👤 Имя: ${name || 'Не указано'}`,
+          `📞 Телефон: ${phone || 'Не указан'}`,
+          `📱 Telegram: ${userName} (${userUsername})`,
+          '',
+          '💬 Отзыв:',
+          message
+        ].join('\n');
+
         const telegramResponse = await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/sendMessage`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.CHAT_ID, text })
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: env.CHAT_ID, text })
         });
+
         const telegramData = await telegramResponse.json();
-        if (!telegramData.ok) return json({ ok: false, error: telegramData.description || 'Telegram не принял сообщение.' }, 502, corsHeaders);
+        if (!telegramData.ok) {
+          return json({ ok: false, error: telegramData.description || 'Telegram не принял сообщение.' }, 502, corsHeaders);
+        }
+
         return json({ ok: true }, 200, corsHeaders);
       } catch (error) {
         console.error('Feedback error:', error?.stack || error);
@@ -50,7 +68,7 @@ export default {
     if (!contentType.includes('text/html')) return assetResponse;
 
     const html = await assetResponse.text();
-    const feedbackOverride = `<script>(function(){window.sendFeedback=async function(event){event.preventDefault();const form=event.currentTarget||event.target;const name=document.getElementById('fb-name')?.value.trim()||'';const phone=document.getElementById('fb-phone')?.value.trim()||'';const message=document.getElementById('fb-msg')?.value.trim()||'';const button=form?.querySelector('button[type="submit"]');const originalText=button?button.innerHTML:'';if(!message)return;if(button){button.disabled=true;button.textContent='Отправка...';}try{const response=await fetch('https://territoriya-vkusa-tma.timurizgutdinov.workers.dev/api/send-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,message,initData:window.Telegram?.WebApp?.initData||''})});const result=await response.json();if(!response.ok||!result.ok)throw new Error(result.error||'Ошибка отправки');alert('Спасибо! Ваш отзыв отправлен.');document.getElementById('fb-name').value='';document.getElementById('fb-phone').value='';document.getElementById('fb-msg').value='';}catch(error){console.error('Feedback error:',error);alert(error.message||'Не удалось отправить отзыв. Попробуйте ещё раз.');}finally{if(button){button.innerHTML=originalText;button.disabled=false;}}};})();</script>`;
+    const feedbackOverride = `<script>(function(){window.sendFeedback=async function(event){event.preventDefault();const form=event.currentTarget||event.target;const name=document.getElementById('fb-name')?.value.trim()||'';const phone=document.getElementById('fb-phone')?.value.trim()||'';const message=document.getElementById('fb-msg')?.value.trim()||'';const button=form?.querySelector('button[type="submit"]');const originalText=button?button.innerHTML:'';if(!message){alert('Напишите отзыв или сообщение.');return;}if(button){button.disabled=true;button.textContent='Отправка...';}try{const response=await fetch('/api/send-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,message,initData:window.Telegram?.WebApp?.initData||''})});const result=await response.json();if(!response.ok||!result.ok)throw new Error(result.error||'Ошибка отправки');alert('Спасибо! Ваш отзыв отправлен.');document.getElementById('fb-name').value='';document.getElementById('fb-phone').value='';document.getElementById('fb-msg').value='';}catch(error){console.error('Feedback error:',error);if(window.Telegram?.WebApp?.sendData){try{window.Telegram.WebApp.sendData(JSON.stringify({type:'feedback',name:name||'Не указано',phone:phone||'Не указан',message,date:new Date().toLocaleDateString('ru-RU')}));alert('Спасибо! Ваш отзыв отправлен.');return;}catch(_){}}alert(error.message||'Не удалось отправить отзыв. Попробуйте ещё раз.');}finally{if(button){button.innerHTML=originalText;button.disabled=false;}}};})();</script>`;
     const updatedHtml = html.replace('</body>', feedbackOverride + '</body>');
     const headers = new Headers(assetResponse.headers);
     headers.delete('content-length');
@@ -58,4 +76,13 @@ export default {
     return new Response(updatedHtml, { status: assetResponse.status, statusText: assetResponse.statusText, headers });
   }
 };
-function json(data, status = 200, extraHeaders = {}) { return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=UTF-8', ...extraHeaders } }); }
+
+function json(data, status = 200, extraHeaders = {}) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+      ...extraHeaders
+    }
+  });
+}
