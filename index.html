@@ -42,18 +42,16 @@
             background-color: var(--white);
             color: var(--black);
             line-height: 1.4;
-            padding-bottom: 80px; /* Отступ под нижнее меню */
+            padding-bottom: 80px;
             user-select: none;
         }
 
-        /* Контейнер приложения */
         .app-container {
             max-width: 430px;
             margin: 0 auto;
             padding: 20px 16px;
         }
 
-        /* Заголовки */
         h1, h2, h3 {
             font-family: var(--font-heading);
             font-weight: 800;
@@ -66,18 +64,18 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .brand-logo {
-            width: 64px;
-            height: 64px;
+            width: 60px;
+            height: 60px;
             object-fit: contain;
             border-radius: 50%;
         }
 
         .brand-titles h1 {
-            font-size: 22px;
+            font-size: 20px;
             line-height: 1.1;
         }
 
@@ -88,23 +86,23 @@
             margin-top: 2px;
         }
 
-        /* Банер / Главная кнопка действия */
+        /* Герой баннер */
         .hero-banner {
             background-color: var(--black);
             color: var(--white);
             border-radius: var(--radius);
             padding: 20px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .hero-banner h2 {
-            font-size: 20px;
+            font-size: 19px;
             color: var(--primary-yellow);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .hero-banner p {
-            font-size: 14px;
+            font-size: 13px;
             color: #CCCCCC;
             margin-bottom: 16px;
         }
@@ -116,10 +114,10 @@
             justify-content: center;
             gap: 8px;
             width: 100%;
-            padding: 14px 20px;
+            padding: 13px 18px;
             border-radius: var(--radius-btn);
             font-family: var(--font-body);
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             border: none;
             cursor: pointer;
@@ -148,34 +146,33 @@
             border: 2px solid var(--black);
         }
 
-        /* Сетка быстрой навигации */
         .section-title {
-            font-size: 16px;
+            font-size: 15px;
             margin-bottom: 12px;
         }
 
         .quick-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .quick-card {
             background-color: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: var(--radius);
-            padding: 16px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 100px;
+            height: 90px;
             cursor: pointer;
         }
 
         .quick-card-icon {
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             background-color: var(--primary-yellow);
             border-radius: 8px;
             display: flex;
@@ -186,7 +183,7 @@
 
         .quick-card span {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         /* Карточки магазинов */
@@ -194,7 +191,7 @@
             background-color: var(--white);
             border: 1px solid var(--border-color);
             border-radius: var(--radius);
-            padding: 18px;
+            padding: 16px;
             margin-bottom: 12px;
         }
 
@@ -202,28 +199,28 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .store-district {
             background-color: var(--primary-yellow);
             color: var(--black);
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 10px;
+            font-weight: 700;
             padding: 4px 8px;
             border-radius: 6px;
             text-transform: uppercase;
         }
 
         .store-title {
-            font-size: 16px;
+            font-size: 15px;
             margin-bottom: 4px;
         }
 
         .store-address {
             font-size: 13px;
             color: var(--text-secondary);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -233,7 +230,7 @@
             font-size: 12px;
             font-weight: 500;
             color: var(--black);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -255,9 +252,9 @@
         }
 
         .faq-question {
-            padding: 16px;
+            padding: 14px 16px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -265,13 +262,13 @@
         }
 
         .faq-answer {
-            padding: 0 16px 16px 16px;
+            padding: 0 16px 14px 16px;
             font-size: 13px;
             color: var(--text-secondary);
             display: none;
             border-top: 1px solid var(--bg-secondary);
-            margin-top: 8px;
-            padding-top: 12px;
+            margin-top: 6px;
+            padding-top: 10px;
         }
 
         .faq-item.active .faq-answer {
@@ -300,8 +297,8 @@
         }
 
         .form-group label {
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 700;
             text-transform: uppercase;
         }
 
@@ -321,7 +318,7 @@
             background-color: var(--white);
         }
 
-        /* Вкладки (Tabs) */
+        /* Табы */
         .tab-content {
             display: none;
         }
@@ -336,7 +333,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Нижнее меню */
+        /* Навигация */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -381,6 +378,28 @@
             border-radius: 6px;
             padding: 2px;
         }
+
+        .contact-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            color: var(--black);
+            text-decoration: none;
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
@@ -392,21 +411,21 @@
             <img src="assets/logo.png" alt="Территория Вкуса" class="brand-logo" id="app-logo">
             <div class="brand-titles">
                 <h1>Территория Вкуса</h1>
-                <p>Деликатесы и мясные изделия • Ташкент</p>
+                <p>Мясные деликатесы • Ташкент</p>
             </div>
         </header>
 
         <!-- Вкладка: ГЛАВНАЯ -->
         <main id="tab-home" class="tab-content active">
             <div class="hero-banner">
-                <h2>Мясные деликатесы премиум качества</h2>
-                <p>Найдите ближайший филиал и попробуйте фирменную продукцию уже сегодня.</p>
+                <h2>Мясные деликатесы высочайшего качества</h2>
+                <p>Выберите ближайший филиал в Ташкенте и попробуйте свежую продукцию уже сегодня.</p>
                 <button class="btn btn-primary" onclick="switchTab('stores')">
                     <i data-lucide="map-pin"></i> Найти магазин
                 </button>
             </div>
 
-            <h3 class="section-title">Быстрый переход</h3>
+            <h3 class="section-title">Разделы</h3>
             <div class="quick-grid">
                 <div class="quick-card" onclick="switchTab('stores')">
                     <div class="quick-card-icon"><i data-lucide="store"></i></div>
@@ -420,7 +439,7 @@
                     <div class="quick-card-icon"><i data-lucide="phone"></i></div>
                     <span>Контакты</span>
                 </div>
-                <div class="quick-card" onclick="switchTab('feedback')">
+                <div class="quick-card" onclick="switchTab('contacts')">
                     <div class="quick-card-icon"><i data-lucide="message-square"></i></div>
                     <span>Отзыв</span>
                 </div>
@@ -431,50 +450,90 @@
         <section id="tab-stores" class="tab-content">
             <h2 class="section-title" style="margin-bottom: 16px;">Наши филиалы</h2>
 
-            <!-- Карточка магазина 1 -->
+            <!-- 1. Юнусабад -->
             <article class="store-card">
                 <div class="store-header">
-                    <div>
-                        <h3 class="store-title">Филиал Сайрам</h3>
-                    </div>
-                    <span class="store-district">Мирзо-Улугбекский</span>
+                    <h3 class="store-title">Юнусабадский базар</h3>
+                    <span class="store-district">Юнусабад</span>
                 </div>
                 <div class="store-address">
-                    <i data-lucide="map-pin" style="width: 16px;"></i> ул. Сайрам, 37 (Рынок Нарвуз)
+                    <i data-lucide="map-pin" style="width: 16px;"></i> Юнусабад 3-й квартал, 3/4
                 </div>
                 <div class="store-hours">
                     <i data-lucide="clock" style="width: 16px;"></i> 09:00 – 20:00 (Без выходных)
                 </div>
                 <div class="store-actions">
-                    <a href="tel:+998901234567" class="btn btn-outline" style="padding: 10px;">
-                        <i data-lucide="phone" style="width: 16px;"></i> Звонок
+                    <a href="tel:+998946867117" class="btn btn-outline" style="padding: 10px;">
+                        <i data-lucide="phone" style="width: 16px;"></i> Позвонить
                     </a>
-                    <button class="btn btn-primary" style="padding: 10px;" onclick="openMap('Сайрам 37, Ташкент')">
-                        <i data-lucide="navigation" style="width: 16px;"></i> Маршрут
+                    <button class="btn btn-primary" style="padding: 10px;" onclick="openExternal('https://yandex.ru/maps/org/territoriya_vkusa/1083810173/')">
+                        <i data-lucide="navigation" style="width: 16px;"></i> Карта
                     </button>
                 </div>
             </article>
 
-            <!-- Карточка магазина 2 -->
+            <!-- 2. Сайрам -->
             <article class="store-card">
                 <div class="store-header">
-                    <div>
-                        <h3 class="store-title">Филиал Юнусабад</h3>
-                    </div>
-                    <span class="store-district">Юнусабадский</span>
+                    <h3 class="store-title">Рынок Нарвуз (Сайрам)</h3>
+                    <span class="store-district">Мирзо-Улугбек</span>
                 </div>
                 <div class="store-address">
-                    <i data-lucide="map-pin" style="width: 16px;"></i> Юнусабад, 4-й квартал
+                    <i data-lucide="map-pin" style="width: 16px;"></i> ул. Сайрам, 37 (1 этаж)
                 </div>
                 <div class="store-hours">
-                    <i data-lucide="clock" style="width: 16px;"></i> 09:00 – 21:00 (Без выходных)
+                    <i data-lucide="clock" style="width: 16px;"></i> 09:00 – 20:00 (Без выходных)
                 </div>
                 <div class="store-actions">
-                    <a href="tel:+998901234567" class="btn btn-outline" style="padding: 10px;">
-                        <i data-lucide="phone" style="width: 16px;"></i> Звонок
+                    <a href="tel:+998946867117" class="btn btn-outline" style="padding: 10px;">
+                        <i data-lucide="phone" style="width: 16px;"></i> Позвонить
                     </a>
-                    <button class="btn btn-primary" style="padding: 10px;" onclick="openMap('Юнусабад 4, Ташкент')">
-                        <i data-lucide="navigation" style="width: 16px;"></i> Маршрут
+                    <button class="btn btn-primary" style="padding: 10px;" onclick="openExternal('https://yandex.ru/maps/org/territoriya_vkusa/1083810173/')">
+                        <i data-lucide="navigation" style="width: 16px;"></i> Карта
+                    </button>
+                </div>
+            </article>
+
+            <!-- 3. Аския / Шота Руставели -->
+            <article class="store-card">
+                <div class="store-header">
+                    <h3 class="store-title">Аския рынок</h3>
+                    <span class="store-district">Яккасарай</span>
+                </div>
+                <div class="store-address">
+                    <i data-lucide="map-pin" style="width: 16px;"></i> ул. Шота Руставели, 52
+                </div>
+                <div class="store-hours">
+                    <i data-lucide="clock" style="width: 16px;"></i> 09:00 – 20:00 (Без выходных)
+                </div>
+                <div class="store-actions">
+                    <a href="tel:+998946867117" class="btn btn-outline" style="padding: 10px;">
+                        <i data-lucide="phone" style="width: 16px;"></i> Позвонить
+                    </a>
+                    <button class="btn btn-primary" style="padding: 10px;" onclick="openExternal('https://yandex.ru/maps/org/territoriya_vkusa/1083810173/')">
+                        <i data-lucide="navigation" style="width: 16px;"></i> Карта
+                    </button>
+                </div>
+            </article>
+
+            <!-- 4. Чиланзар -->
+            <article class="store-card">
+                <div class="store-header">
+                    <h3 class="store-title">Чиланзар 2-й квартал</h3>
+                    <span class="store-district">Чиланзар</span>
+                </div>
+                <div class="store-address">
+                    <i data-lucide="map-pin" style="width: 16px;"></i> массив Чиланзар, 2-й квартал, 1
+                </div>
+                <div class="store-hours">
+                    <i data-lucide="clock" style="width: 16px;"></i> 09:00 – 20:00 (Без выходных)
+                </div>
+                <div class="store-actions">
+                    <a href="tel:+998946867117" class="btn btn-outline" style="padding: 10px;">
+                        <i data-lucide="phone" style="width: 16px;"></i> Позвонить
+                    </a>
+                    <button class="btn btn-primary" style="padding: 10px;" onclick="openExternal('https://yandex.ru/maps/org/territoriya_vkusa/15761000931/')">
+                        <i data-lucide="navigation" style="width: 16px;"></i> Карта
                     </button>
                 </div>
             </article>
@@ -490,17 +549,27 @@
                     <i data-lucide="chevron-down" class="faq-icon"></i>
                 </div>
                 <div class="faq-answer">
-                    Все наши точки работают ежедневно с 09:00 до 20:00 (некоторые филиалы до 21:00) без перерывов и выходных.
+                    Наши филиалы работают ежедневно с 09:00 до 20:00 без перерывов и выходных.
                 </div>
             </div>
 
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question">
-                    ЕСТЬ ЛИ У ВАС ДОСТАВКА По Ташкенту?
+                    Есть ли у вас доставка по Ташкенту?
                     <i data-lucide="chevron-down" class="faq-icon"></i>
                 </div>
                 <div class="faq-answer">
-                    Да, вы можете оформить доставку через Яндекс Доставку или связаться с нами напрямую для формирования заказа.
+                    Да, вы можете оформить заказ с доставкой по городу. Напишите нам в Telegram или позвоните в ближайший магазин для уточнения ассортимента и отправки через экспресс-доставку.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    Как узнать наличие конкретных деликатесов?
+                    <i data-lucide="chevron-down" class="faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Вы можете позвонить напрямую в удобный для вас филиал по номерам, указанным во вкладке «Магазины», или написать нам в Telegram.
                 </div>
             </div>
 
@@ -510,33 +579,46 @@
                     <i data-lucide="chevron-down" class="faq-icon"></i>
                 </div>
                 <div class="faq-answer">
-                    Да, вся наша продукция изготавливается из свежего отборного мяса и проходит строгий ветеринарный и санитарный контроль.
+                    Да, вся продукция изготавливается из свежего отборного сырья с соблюдением всех санитарных стандартов и строгого контроля качества.
                 </div>
             </div>
         </section>
 
         <!-- Вкладка: КОНТАКТЫ И ОБРАТНАЯ СВЯЗЬ -->
         <section id="tab-contacts" class="tab-content">
-            <h2 class="section-title" style="margin-bottom: 16px;">Контакты</h2>
+            <h2 class="section-title" style="margin-bottom: 16px;">Связаться с нами</h2>
             
-            <div style="background: var(--bg-secondary); border-radius: var(--radius); padding: 16px; margin-bottom: 24px;">
-                <p style="font-size: 14px; margin-bottom: 8px;"><strong>Единый телефон:</strong> +998 (90) 123-45-67</p>
-                <p style="font-size: 14px; margin-bottom: 8px;"><strong>Локация:</strong> г. Ташкент, Узбекистан</p>
-                <p style="font-size: 14px;"><strong>Telegram:</strong> @territoriya_vkusa</p>
+            <div class="contact-card">
+                <a href="tel:+998946867117" class="contact-item">
+                    <i data-lucide="phone" style="width: 18px; color: var(--black);"></i>
+                    <span><strong>Телефон:</strong> +998 (94) 686-71-17</span>
+                </a>
+                <a href="https://t.me/territoriavkusa_uz" target="_blank" class="contact-item">
+                    <i data-lucide="send" style="width: 18px; color: var(--black);"></i>
+                    <span><strong>Telegram канал:</strong> @territoriavkusa_uz</span>
+                </a>
+                <div class="contact-item">
+                    <i data-lucide="map-pin" style="width: 18px; color: var(--black);"></i>
+                    <span><strong>Локация:</strong> г. Ташкент, Узбекистан</span>
+                </div>
             </div>
 
-            <h2 class="section-title" style="margin-bottom: 12px;">Обратная связь</h2>
+            <h2 class="section-title" style="margin-bottom: 12px;">Обратная связь и отзывы</h2>
             <form class="feedback-form" onsubmit="sendFeedback(event)">
                 <div class="form-group">
                     <label>Ваше имя</label>
-                    <input type="text" id="fb-name" class="form-input" placeholder="Иван" required>
+                    <input type="text" id="fb-name" class="form-input" placeholder="Введите имя" required>
                 </div>
                 <div class="form-group">
-                    <label>Сообщение / Отзыв</label>
-                    <textarea id="fb-msg" class="form-textarea" rows="4" placeholder="Напишите ваш отзыв или вопрос..." required></textarea>
+                    <label>Номер телефона для связи</label>
+                    <input type="tel" id="fb-phone" class="form-input" placeholder="+998 90 123 45 67" required>
                 </div>
-                <button type="submit" class="btn btn-primary" style="margin-top: 8px;">
-                    <i data-lucide="send"></i> Отправить
+                <div class="form-group">
+                    <label>Ваш отзыв или вопрос</label>
+                    <textarea id="fb-msg" class="form-textarea" rows="4" placeholder="Напишите сообщение..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 4px;">
+                    <i data-lucide="send"></i> Отправить отзыв
                 </button>
             </form>
         </section>
@@ -564,53 +646,41 @@
     </nav>
 
     <script>
-        // Инициализация Telegram SDK
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.ready();
             tg.expand();
         }
 
-        // Инициализация векторных иконок
         lucide.createIcons();
 
-        // Переключение вкладок
         function switchTab(tabId, element) {
-            // Скрыть все вкладки
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            // Показать нужную
             const targetTab = document.getElementById('tab-' + tabId);
             if (targetTab) {
                 targetTab.classList.add('active');
             }
 
-            // Обновить состояние нижней навигации
+            const navItems = document.querySelectorAll('.nav-item');
+            const tabIndexMap = { 'home': 0, 'stores': 1, 'faq': 2, 'contacts': 3 };
+            
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             if (element) {
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 element.classList.add('active');
-            } else {
-                // Если вызвано из кнопки внутри экрана, подсветить соответствующую иконку
-                const navItems = document.querySelectorAll('.nav-item');
-                const tabIndexMap = { 'home': 0, 'stores': 1, 'faq': 2, 'contacts': 3, 'feedback': 3 };
-                if (tabIndexMap[tabId] !== undefined) {
-                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                    navItems[tabIndexMap[tabId]].classList.add('active');
-                }
+            } else if (tabIndexMap[tabId] !== undefined) {
+                navItems[tabIndexMap[tabId]].classList.add('active');
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Accordion для FAQ
         function toggleFaq(element) {
             element.classList.toggle('active');
         }
 
-        // Открытие Яндекс Карт / Внешних ссылок
-        function openMap(query) {
-            const url = `https://yandex.ru/maps/?text=${encodeURIComponent(query)}`;
+        function openExternal(url) {
             if (tg && tg.openLink) {
                 tg.openLink(url);
             } else {
@@ -618,23 +688,24 @@
             }
         }
 
-        // Отправка формы обратной связи в Telegram-бот
         function sendFeedback(event) {
             event.preventDefault();
             const name = document.getElementById('fb-name').value;
+            const phone = document.getElementById('fb-phone').value;
             const message = document.getElementById('fb-msg').value;
 
             const payload = {
                 type: 'feedback',
                 name: name,
+                phone: phone,
                 message: message,
-                timestamp: new Date().toISOString()
+                date: new Date().toLocaleDateString('ru-RU')
             };
 
             if (tg && tg.sendData) {
                 tg.sendData(JSON.stringify(payload));
             } else {
-                alert('Спасибо! Ваш отзыв отправлен.');
+                alert('Спасибо за отзыв! Данные отправлены.');
             }
         }
     </script>
