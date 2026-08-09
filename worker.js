@@ -1,5 +1,4 @@
-const FEEDBACK_FUNCTION = `
-        async function sendFeedback(e) {
+const FEEDBACK_FUNCTION = `        async function sendFeedback(e) {
             e.preventDefault();
             const textarea = document.getElementById('fb-msg');
             const messageText = textarea.value.trim();
@@ -114,7 +113,15 @@ export default {
 
         let html = await response.text();
         html = html.replace(/\s*const BOT_TOKEN = '[^']*';\s*const CHAT_ID = '[^']*';\s*/s, '\n');
-        html = html.replace(/        async function sendFeedback\(e\) \{[\s\S]*?\n        \}\n    <\\/script>/, `${FEEDBACK_FUNCTION}    </script>`);
+
+        const startMarker = '        async function sendFeedback(e) {';
+        const endMarker = '    </script>';
+        const start = html.indexOf(startMarker);
+        const end = start >= 0 ? html.indexOf(endMarker, start) : -1;
+
+        if (start >= 0 && end >= 0) {
+            html = html.slice(0, start) + FEEDBACK_FUNCTION + html.slice(end);
+        }
 
         return new Response(html, {
             status: response.status,
