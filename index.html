@@ -500,13 +500,23 @@
 
         <!-- Магазины -->
         <section id="tab-stores" class="tab-content">
-            <h2 class="section-title" style="margin-bottom: 16px;">НАШИ ФИЛИАЛЫ</h2>
+            <h2 class="section-title" style="margin-bottom: 16px;">НАШИ ФИЛИАЛЫ (6 МАГАЗИНОВ)</h2>
+            
             <article class="store-card">
                 <h3 class="store-title">Юнусабадский дехкон базар</h3>
                 <p style="font-size: 13px; color: var(--text-gray); margin-top: 4px;">Мясной павильон</p>
                 <div class="store-actions">
                      <a href="tel:+998954743050" class="btn btn-outline">Позвонить</a>
                      <button class="btn btn-primary" onclick="openExternal('https://yandex.uz/maps/-/CPaXaDox')">Карта</button>
+                </div>
+            </article>
+
+            <article class="store-card">
+                <h3 class="store-title">Рынок Нарвуз / Сайрам</h3>
+                <p style="font-size: 13px; color: var(--text-gray); margin-top: 4px;">ул. Сайрам, 37</p>
+                <div class="store-actions">
+                     <a href="tel:+998954743050" class="btn btn-outline">Позвонить</a>
+                     <button class="btn btn-primary" onclick="openExternal('https://yandex.uz/maps')">Карта</button>
                 </div>
             </article>
         </section>
@@ -516,7 +526,7 @@
             <h2 class="section-title">ЧАСТЫЕ ВОПРОСЫ</h2>
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question">Какой график работы? <i data-lucide="chevron-down" class="faq-icon"></i></div>
-                <div class="faq-answer">Смотрите подробную информацию во вкладке "Магазины".</div>
+                <div class="faq-answer">Смотрите подробную информацию во вкладке «Магазины».</div>
             </div>
         </section>
 
@@ -556,7 +566,6 @@
         tg.ready();
         tg.expand();
 
-        // НАСТРОЙКИ ТЕЛЕГРАМ БОТА
         const BOT_TOKEN = '8378237744:AAGcWJNnwZ-sDPwH67zPAXexgDDmr-iEo64';
         const CHAT_ID = '-1003258945693';
 
@@ -617,7 +626,7 @@
                     alert('Спасибо! Ваш отзыв успешно отправлен.');
                     switchTab('home', document.querySelector('.nav-item:nth-child(1)'));
                 } else {
-                    alert('Ошибка отправки: ' + (data.description || 'Проверьте токен и ID группы'));
+                    alert('Ошибка отправки: ' + (data.description || 'Проверьте настройки бота'));
                 }
             } catch (error) {
                 console.error('Network error:', error);
