@@ -1,0 +1,7 @@
+name = "territoriya-vkusa-tma"
+main = "worker.js"
+compatibility_date = "2026-08-09"
+
+[assets]
+directory = "."
+binding = "ASSETS"
