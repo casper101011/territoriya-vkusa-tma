@@ -19,11 +19,12 @@
     <style>
         :root {
             --primary-yellow: #FFDD00;
-            --black: #000000;
-            --white: #FFFFFF;
-            --bg-secondary: #F7F7F7;
-            --text-secondary: #555555;
-            --border-color: #E5E5E5;
+            --bg-black: #0D0D0D;
+            --bg-card: #181818;
+            --bg-secondary: #222222;
+            --text-white: #FFFFFF;
+            --text-gray: #A0A0A0;
+            --border-color: #2A2A2A;
             --font-heading: 'Montserrat', -apple-system, sans-serif;
             --font-body: 'Inter', -apple-system, sans-serif;
             --radius: 16px;
@@ -39,10 +40,10 @@
 
         body {
             font-family: var(--font-body);
-            background-color: var(--white);
-            color: var(--black);
+            background-color: var(--bg-black);
+            color: var(--text-white);
             line-height: 1.4;
-            padding-bottom: 80px;
+            padding-bottom: 84px;
             user-select: none;
         }
 
@@ -64,7 +65,7 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .brand-logo {
@@ -72,39 +73,57 @@
             height: 60px;
             object-fit: contain;
             border-radius: 50%;
+            border: 2px solid var(--primary-yellow);
         }
 
         .brand-titles h1 {
             font-size: 20px;
             line-height: 1.1;
+            color: var(--text-white);
         }
 
         .brand-titles p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            margin-top: 2px;
+            font-size: 12px;
+            color: var(--primary-yellow);
+            font-weight: 600;
+            margin-top: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        /* Герой баннер */
+        /* Премиум Герой Баннер */
         .hero-banner {
-            background-color: var(--black);
-            color: var(--white);
+            background: linear-gradient(180deg, rgba(24, 24, 24, 0.8) 0%, rgba(13, 13, 13, 1) 100%), #181818;
+            border: 1px solid var(--border-color);
             border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 24px 20px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255, 221, 0, 0.15) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none;
         }
 
         .hero-banner h2 {
-            font-size: 19px;
-            color: var(--primary-yellow);
-            margin-bottom: 6px;
+            font-size: 20px;
+            color: var(--text-white);
+            margin-bottom: 8px;
+            line-height: 1.2;
         }
 
         .hero-banner p {
             font-size: 13px;
-            color: #CCCCCC;
-            margin-bottom: 16px;
+            color: var(--text-gray);
+            margin-bottom: 20px;
         }
 
         /* Кнопки */
@@ -114,15 +133,17 @@
             justify-content: center;
             gap: 8px;
             width: 100%;
-            padding: 13px 18px;
+            padding: 14px 20px;
             border-radius: var(--radius-btn);
             font-family: var(--font-body);
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             border: none;
             cursor: pointer;
             transition: opacity 0.15s ease, transform 0.1s ease;
             text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
         }
 
         .btn:active {
@@ -132,94 +153,101 @@
 
         .btn-primary {
             background-color: var(--primary-yellow);
-            color: var(--black);
-        }
-
-        .btn-secondary {
-            background-color: var(--black);
-            color: var(--white);
+            color: #000000;
         }
 
         .btn-outline {
-            background-color: var(--white);
-            color: var(--black);
-            border: 2px solid var(--black);
+            background-color: transparent;
+            color: var(--text-white);
+            border: 1px solid var(--border-color);
         }
 
         .section-title {
-            font-size: 15px;
-            margin-bottom: 12px;
+            font-size: 14px;
+            color: var(--text-gray);
+            margin-bottom: 14px;
+            letter-spacing: 0.05em;
         }
 
+        /* Быстрый переход в виде стильных плиток */
         .quick-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
         .quick-card {
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius);
-            padding: 14px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 90px;
+            height: 100px;
             cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .quick-card:active {
+            border-color: var(--primary-yellow);
         }
 
         .quick-card-icon {
-            width: 30px;
-            height: 30px;
-            background-color: var(--primary-yellow);
-            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            background-color: var(--bg-secondary);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--black);
+            color: var(--primary-yellow);
+            border: 1px solid var(--border-color);
         }
 
         .quick-card span {
             font-weight: 600;
             font-size: 13px;
+            color: var(--text-white);
         }
 
         /* Карточки магазинов */
         .store-card {
-            background-color: var(--white);
+            background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius);
-            padding: 16px;
-            margin-bottom: 12px;
+            padding: 18px;
+            margin-bottom: 14px;
         }
 
         .store-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .store-district {
-            background-color: var(--primary-yellow);
-            color: var(--black);
+            background-color: rgba(255, 221, 0, 0.15);
+            color: var(--primary-yellow);
             font-size: 10px;
             font-weight: 700;
             padding: 4px 8px;
             border-radius: 6px;
             text-transform: uppercase;
+            border: 1px solid rgba(255, 221, 0, 0.3);
         }
 
         .store-title {
-            font-size: 15px;
+            font-size: 16px;
+            color: var(--text-white);
             margin-bottom: 4px;
         }
 
         .store-address {
             font-size: 13px;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             margin-bottom: 8px;
             display: flex;
             align-items: center;
@@ -229,8 +257,8 @@
         .store-hours {
             font-size: 12px;
             font-weight: 500;
-            color: var(--black);
-            margin-bottom: 14px;
+            color: var(--text-white);
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -239,7 +267,7 @@
         .store-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
         }
 
         /* FAQ (Accordion) */
@@ -248,27 +276,32 @@
             border-radius: var(--radius);
             margin-bottom: 10px;
             overflow: hidden;
-            background-color: var(--white);
+            background-color: var(--bg-card);
         }
 
         .faq-question {
-            padding: 14px 16px;
+            padding: 16px;
             font-weight: 600;
             font-size: 13px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+            color: var(--text-white);
         }
 
         .faq-answer {
-            padding: 0 16px 14px 16px;
+            padding: 0 16px 16px 16px;
             font-size: 13px;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             display: none;
-            border-top: 1px solid var(--bg-secondary);
-            margin-top: 6px;
-            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4px;
+            padding-top: 12px;
+        }
+
+        .faq-item.active {
+            border-color: rgba(255, 221, 0, 0.4);
         }
 
         .faq-item.active .faq-answer {
@@ -277,17 +310,14 @@
 
         .faq-item.active .faq-icon {
             transform: rotate(180deg);
-        }
-
-        .faq-icon {
-            transition: transform 0.2s ease;
+            color: var(--primary-yellow);
         }
 
         /* Форма обратной связи */
         .feedback-form {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
         }
 
         .form-group {
@@ -300,22 +330,23 @@
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
+            color: var(--text-gray);
         }
 
         .form-input, .form-textarea {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-btn);
             font-family: var(--font-body);
             font-size: 14px;
             outline: none;
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-card);
+            color: var(--text-white);
         }
 
         .form-input:focus, .form-textarea:focus {
-            border-color: var(--black);
-            background-color: var(--white);
+            border-color: var(--primary-yellow);
         }
 
         /* Табы */
@@ -333,17 +364,17 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Навигация */
+        /* Нижняя навигация */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: var(--white);
+            background-color: #121212;
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
-            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
             z-index: 1000;
             max-width: 430px;
             margin: 0 auto;
@@ -354,7 +385,7 @@
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             font-size: 10px;
             font-weight: 600;
             text-decoration: none;
@@ -363,37 +394,34 @@
         }
 
         .nav-item i {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
         }
 
         .nav-item.active {
-            color: var(--black);
+            color: var(--primary-yellow);
         }
 
         .nav-item.active i {
-            color: var(--black);
-            stroke: var(--black);
-            background-color: var(--primary-yellow);
-            border-radius: 6px;
-            padding: 2px;
+            color: var(--primary-yellow);
+            stroke: var(--primary-yellow);
         }
 
         .contact-card {
-            background: var(--bg-secondary);
+            background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius);
-            padding: 16px;
-            margin-bottom: 20px;
+            padding: 18px;
+            margin-bottom: 24px;
         }
 
         .contact-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             font-size: 13px;
-            margin-bottom: 12px;
-            color: var(--black);
+            margin-bottom: 14px;
+            color: var(--text-white);
             text-decoration: none;
         }
 
@@ -418,14 +446,14 @@
         <!-- Вкладка: ГЛАВНАЯ -->
         <main id="tab-home" class="tab-content active">
             <div class="hero-banner">
-                <h2>Мясные деликатесы высочайшего качества</h2>
+                <h2>Деликатесы высочайшего качества</h2>
                 <p>Выберите ближайший филиал в Ташкенте и попробуйте свежую продукцию уже сегодня.</p>
                 <button class="btn btn-primary" onclick="switchTab('stores')">
                     <i data-lucide="map-pin"></i> Найти магазин
                 </button>
             </div>
 
-            <h3 class="section-title">Разделы</h3>
+            <h3 class="section-title">РАЗДЕЛЫ</h3>
             <div class="quick-grid">
                 <div class="quick-card" onclick="switchTab('stores')">
                     <div class="quick-card-icon"><i data-lucide="store"></i></div>
@@ -448,7 +476,7 @@
 
         <!-- Вкладка: МАГАЗИНЫ -->
         <section id="tab-stores" class="tab-content">
-            <h2 class="section-title" style="margin-bottom: 16px;">Наши филиалы</h2>
+            <h2 class="section-title" style="margin-bottom: 16px;">НАШИ ФИЛИАЛЫ</h2>
 
             <!-- 1. Юнусабад -->
             <article class="store-card">
@@ -541,7 +569,7 @@
 
         <!-- Вкладка: FAQ -->
         <section id="tab-faq" class="tab-content">
-            <h2 class="section-title" style="margin-bottom: 16px;">Вопросы и ответы</h2>
+            <h2 class="section-title" style="margin-bottom: 16px;">ВОПРОСЫ И ОТВЕТЫ</h2>
 
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question">
@@ -586,31 +614,31 @@
 
         <!-- Вкладка: КОНТАКТЫ И ОБРАТНАЯ СВЯЗЬ -->
         <section id="tab-contacts" class="tab-content">
-            <h2 class="section-title" style="margin-bottom: 16px;">Связаться с нами</h2>
+            <h2 class="section-title" style="margin-bottom: 16px;">СВЯЗАТЬСЯ С НАМИ</h2>
             
             <div class="contact-card">
                 <a href="tel:+998946867117" class="contact-item">
-                    <i data-lucide="phone" style="width: 18px; color: var(--black);"></i>
+                    <i data-lucide="phone" style="width: 18px; color: var(--primary-yellow);"></i>
                     <span><strong>Телефон:</strong> +998 (94) 686-71-17</span>
                 </a>
                 <a href="https://t.me/territoriavkusa_uz" target="_blank" class="contact-item">
-                    <i data-lucide="send" style="width: 18px; color: var(--black);"></i>
+                    <i data-lucide="send" style="width: 18px; color: var(--primary-yellow);"></i>
                     <span><strong>Telegram канал:</strong> @territoriavkusa_uz</span>
                 </a>
                 <div class="contact-item">
-                    <i data-lucide="map-pin" style="width: 18px; color: var(--black);"></i>
+                    <i data-lucide="map-pin" style="width: 18px; color: var(--primary-yellow);"></i>
                     <span><strong>Локация:</strong> г. Ташкент, Узбекистан</span>
                 </div>
             </div>
 
-            <h2 class="section-title" style="margin-bottom: 12px;">Обратная связь и отзывы</h2>
+            <h2 class="section-title" style="margin-bottom: 12px;">ОБРАТНАЯ СВЯЗЬ И ОТЗЫВЫ</h2>
             <form class="feedback-form" onsubmit="sendFeedback(event)">
                 <div class="form-group">
                     <label>Ваше имя</label>
                     <input type="text" id="fb-name" class="form-input" placeholder="Введите имя" required>
                 </div>
                 <div class="form-group">
-                    <label>Номер телефона для связи</label>
+                    <label>Номер телефона</label>
                     <input type="tel" id="fb-phone" class="form-input" placeholder="+998 90 123 45 67" required>
                 </div>
                 <div class="form-group">
