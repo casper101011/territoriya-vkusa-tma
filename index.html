@@ -65,7 +65,7 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .brand-logo {
@@ -96,8 +96,8 @@
             background: linear-gradient(180deg, rgba(24, 24, 24, 0.8) 0%, rgba(13, 13, 13, 1) 100%), #181818;
             border: 1px solid var(--border-color);
             border-radius: var(--radius);
-            padding: 24px 20px;
-            margin-bottom: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
             position: relative;
             overflow: hidden;
         }
@@ -114,16 +114,69 @@
         }
 
         .hero-banner h2 {
-            font-size: 20px;
+            font-size: 18px;
             color: var(--text-white);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             line-height: 1.2;
         }
 
         .hero-banner p {
             font-size: 13px;
             color: var(--text-gray);
+            margin-bottom: 16px;
+        }
+
+        /* Блок Ассортимента на Главной */
+        .assortment-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 18px;
             margin-bottom: 20px;
+        }
+
+        .assortment-card h3 {
+            font-size: 15px;
+            color: var(--primary-yellow);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .assortment-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-white);
+        }
+
+        .assortment-list li {
+            position: relative;
+            padding-left: 16px;
+            line-height: 1.4;
+        }
+
+        .assortment-list li::before {
+            content: '•';
+            color: var(--primary-yellow);
+            position: absolute;
+            left: 0;
+            font-size: 16px;
+            top: -2px;
+        }
+
+        .promo-box {
+            margin-top: 14px;
+            padding: 12px;
+            background: rgba(255, 221, 0, 0.08);
+            border: 1px dashed var(--primary-yellow);
+            border-radius: var(--radius-btn);
+            font-size: 12px;
+            color: var(--text-white);
+            text-align: center;
         }
 
         /* Кнопки */
@@ -170,9 +223,9 @@
         }
 
         .section-title {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-gray);
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             letter-spacing: 0.05em;
         }
 
@@ -192,7 +245,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 100px;
+            height: 95px;
             cursor: pointer;
             transition: border-color 0.2s ease;
         }
@@ -219,12 +272,12 @@
             color: var(--text-white);
         }
         
-        /* Соцсети кнопки */
+        /* Соцсети кнопки с красивыми иконками */
         .social-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
         
         .btn-social {
@@ -241,6 +294,12 @@
             font-weight: 600;
             text-decoration: none;
             cursor: pointer;
+        }
+
+        .social-icon-img {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
         }
 
         /* Карточки магазинов */
@@ -462,7 +521,7 @@
             <img src="https://p.taplink.st/a/c/2/4/c/db37b1.png?1" alt="Территория Вкуса" class="brand-logo" id="app-logo">
             <div class="brand-titles">
                 <h1>Территория Вкуса</h1>
-                <p>Мясные деликатесы • Ташкент</p>
+                <p>Сеть мясных деликатесов • 6 филиалов</p>
             </div>
         </header>
 
@@ -475,19 +534,37 @@
             
             <div class="social-grid">
                 <button class="btn-social" onclick="openExternal('https://www.instagram.com/territoriavkusa.uz/')">
-                    <i data-lucide="instagram" style="width:16px;"></i> Instagram
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" class="social-icon-img"> Instagram
                 </button>
                 <button class="btn-social" onclick="openExternal('https://t.me/territoriavkusa')">
-                    <i data-lucide="send" style="width:16px;"></i> Telegram-канал
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" class="social-icon-img"> Telegram
                 </button>
             </div>
 
             <div class="hero-banner">
-                <h2>Деликатесы высочайшего качества</h2>
-                <p>Выберите ближайший из наших филиалов и попробуйте свежую продукцию уже сегодня.</p>
+                <h2>Мясные деликатесы в Ташкенте</h2>
+                <p>Мы — сеть специализированных магазинов мясных деликатесов. В Ташкенте для вас работают 6 удобных филиалов!</p>
                 <button class="btn btn-primary" onclick="switchTab('stores')">
-                    <i data-lucide="map-pin"></i> Наши Магазины
+                    <i data-lucide="map-pin"></i> Выбрать филиал
                 </button>
+            </div>
+
+            <!-- Блок Ассортимента -->
+            <div class="assortment-card">
+                <h3><i data-lucide="shopping-bag" style="width: 18px;"></i> Наш Ассортимент</h3>
+                <ul class="assortment-list">
+                    <li>Колбасы и сосиски (вареные, сырокопченые, полукопченые, горячего копчения)</li>
+                    <li>Копченая курочка и деликатесы из птицы</li>
+                    <li>Отборные морепродукты и рыбы</li>
+                    <li>Вкуснейшие домашние полуфабрикаты</li>
+                    <li>Продукция местного производства, а также импорт из России и Беларуси</li>
+                    <li><strong>Огромный выбор свежей свинины:</strong> шея, мякоть, фарш, ребра и другие части</li>
+                </ul>
+
+                <div class="promo-box">
+                    🔥 <strong>Постоянные акции и скидки!</strong><br>
+                    Следите за специальными предложениями в нашем Instagram.
+                </div>
             </div>
 
             <h3 class="section-title">МЕНЮ ПРИЛОЖЕНИЯ</h3>
@@ -694,21 +771,33 @@
 
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question">
-                    Есть ли у вас доставка по Ташкенту?
+                    Сколько стоит доставка по Ташкенту?
                     <i data-lucide="chevron-down" class="faq-icon"></i>
                 </div>
                 <div class="faq-answer">
-                    Да, вы можете оформить заказ с доставкой по городу. Нажмите на кнопку «Заказать доставку» на Главной странице, чтобы написать нашему менеджеру в Telegram.
+                    У нас есть два варианта доставки:<br>
+                    1. <strong>Фирменная доставка:</strong> 40 000 сум (доставляется в течение дня).<br>
+                    2. <strong>Срочная доставка:</strong> отправка через Яндекс Доставку, стоимость рассчитывается по тарифам сервиса.
                 </div>
             </div>
 
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question">
-                    Как узнать наличие конкретных деликатесов?
+                    Как забронировать товар или сделать предзаказ?
                     <i data-lucide="chevron-down" class="faq-icon"></i>
                 </div>
                 <div class="faq-answer">
-                    Вы можете позвонить напрямую продавцу нужного вам филиала по номерам, указанным в карточках магазинов.
+                    Вы можете позвонить напрямую продавцу нужного вам филиала во вкладке «Магазины» и попросить отложить нужные деликатесы к вашему приходу.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    Где смотреть информацию про скидки и акции?
+                    <i data-lucide="chevron-down" class="faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Все актуальные акции, спецпредложения и обновления ассортимента мы регулярно публикуем в нашем Instagram-аккаунте!
                 </div>
             </div>
 
