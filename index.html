@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Территория Вкуса — Telegram Mini App</title>
+    
+    <!-- Подключение шрифтов Montserrat & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        :root {
+            --primary-yellow: #FFDD00;
+            --black: #000000;
+            --white: #FFFFFF;
+            --bg-secondary: #F7F7F7;
+            --text-secondary: #555555;
+            --border-color: #E5E5E5;
+            --font-heading: 'Montserrat', -apple-system, sans-serif;
+            --font-body: 'Inter', -apple-system, sans-serif;
+            --radius: 16px;
+            --radius-btn: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--white);
+            color: var(--black);
+            line-height: 1.4;
+            padding-bottom: 80px; /* Отступ под нижнее меню */
+            user-select: none;
+        }
+
+        /* Контейнер приложения */
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        /* Заголовки */
+        h1, h2, h3 {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+        }
+
+        /* Шапка с логотипом */
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .brand-logo {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .brand-titles h1 {
+            font-size: 22px;
+            line-height: 1.1;
+        }
+
+        .brand-titles p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        /* Банер / Главная кнопка действия */
+        .hero-banner {
+            background-color: var(--black);
+            color: var(--white);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .hero-banner h2 {
+            font-size: 20px;
+            color: var(--primary-yellow);
+            margin-bottom: 8px;
+        }
+
+        .hero-banner p {
+            font-size: 14px;
+            color: #CCCCCC;
+            margin-bottom: 16px;
+        }
+
+        /* Кнопки */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: var(--radius-btn);
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.15s ease, transform 0.1s ease;
+            text-decoration: none;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-yellow);
+            color: var(--black);
+        }
+
+        .btn-secondary {
+            background-color: var(--black);
+            color: var(--white);
+        }
+
+        .btn-outline {
+            background-color: var(--white);
+            color: var(--black);
+            border: 2px solid var(--black);
+        }
+
+        /* Сетка быстрой навигации */
+        .section-title {
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .quick-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100px;
+            cursor: pointer;
+        }
+
+        .quick-card-icon {
+            width: 32px;
+            height: 32px;
+            background-color: var(--primary-yellow);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+        }
+
+        .quick-card span {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Карточки магазинов */
+        .store-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 18px;
+            margin-bottom: 12px;
+        }
+
+        .store-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .store-district {
+            background-color: var(--primary-yellow);
+            color: var(--black);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .store-title {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .store-address {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .store-hours {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--black);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .store-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* FAQ (Accordion) */
+        .faq-item {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            margin-bottom: 10px;
+            overflow: hidden;
+            background-color: var(--white);
+        }
+
+        .faq-question {
+            padding: 16px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .faq-answer {
+            padding: 0 16px 16px 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: none;
+            border-top: 1px solid var(--bg-secondary);
+            margin-top: 8px;
+            padding-top: 12px;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-icon {
+            transition: transform 0.2s ease;
+        }
+
+        /* Форма обратной связи */
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-btn);
+            font-family: var(--font-body);
+            font-size: 14px;
+            outline: none;
+            background-color: var(--bg-secondary);
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--black);
+            background-color: var(--white);
+        }
+
+        /* Вкладки (Tabs) */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.15s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Нижнее меню */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--white);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+            z-index: 1000;
+            max-width: 430px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            font-size: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            width: 25%;
+        }
+
+        .nav-item i {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-item.active {
+            color: var(--black);
+        }
+
+        .nav-item.active i {
+            color: var(--black);
+            stroke: var(--black);
+            background-color: var(--primary-yellow);
+            border-radius: 6px;
+            padding: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Шапка -->
+        <header class="header-brand">
+            <img src="assets/logo.png" alt="Территория Вкуса" class="brand-logo" id="app-logo">
+            <div class="brand-titles">
+                <h1>Территория Вкуса</h1>
+                <p>Деликатесы и мясные изделия • Ташкент</p>
+            </div>
+        </header>
+
+        <!-- Вкладка: ГЛАВНАЯ -->
+        <main id="tab-home" class="tab-content active">
+            <div class="hero-banner">
+                <h2>Мясные деликатесы премиум качества</h2>
+                <p>Найдите ближайший филиал и попробуйте фирменную продукцию уже сегодня.</p>
+                <button class="btn btn-primary" onclick="switchTab('stores')">
+                    <i data-lucide="map-pin"></i> Найти магазин
+                </button>
+            </div>
+
+            <h3 class="section-title">Быстрый переход</h3>
+            <div class="quick-grid">
+                <div class="quick-card" onclick="switchTab('stores')">
+                    <div class="quick-card-icon"><i data-lucide="store"></i></div>
+                    <span>Магазины</span>
+                </div>
+                <div class="quick-card" onclick="switchTab('faq')">
+                    <div class="quick-card-icon"><i data-lucide="help-circle"></i></div>
+                    <span>FAQ</span>
+                </div>
+                <div class="quick-card" onclick="switchTab('contacts')">
+                    <div class="quick-card-icon"><i data-lucide="phone"></i></div>
+                    <span>Контакты</span>
+                </div>
+                <div class="quick-card" onclick="switchTab('feedback')">
+                    <div class="quick-card-icon"><i data-lucide="message-square"></i></div>
+                    <span>Отзыв</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Вкладка: МАГАЗИНЫ -->
+        <section id="tab-stores" class="tab-content">
+            <h2 class="section-title" style="margin-bottom: 16px;">Наши филиалы</h2>
+
+            <!-- Карточка магазина 1 -->
+            <article class="store-card">
+                <div class="store-header">
+                    <div>
+                        <h3 class="store-title">Филиал Сайрам</h3>
+                    </div>
+                    <span class="store-district">Мирзо-Улугбекский</span>
+                </div>
+                <div class="store-address">
+                    <i data-lucide="map-pin" style="width: 16px;"></i> ул. Сайрам, 37 (Рынок Нарвуз)
+                </div>
+                <div class="store-hours">
+                    <i data-lucide="clock" style="width: 16px;"></i> 09:00 – 20:00 (Без выходных)
+                </div>
+                <div class="store-actions">
+                    <a href="tel:+998901234567" class="btn btn-outline" style="padding: 10px;">
+                        <i data-lucide="phone" style="width: 16px;"></i> Звонок
+                    </a>
+                    <button class="btn btn-primary" style="padding: 10px;" onclick="openMap('Сайрам 37, Ташкент')">
+                        <i data-lucide="navigation" style="width: 16px;"></i> Маршрут
+                    </button>
+                </div>
+            </article>
+
+            <!-- Карточка магазина 2 -->
+            <article class="store-card">
+                <div class="store-header">
+                    <div>
+                        <h3 class="store-title">Филиал Юнусабад</h3>
+                    </div>
+                    <span class="store-district">Юнусабадский</span>
+                </div>
+                <div class="store-address">
+                    <i data-lucide="map-pin" style="width: 16px;"></i> Юнусабад, 4-й квартал
+                </div>
+                <div class="store-hours">
+                    <i data-lucide="clock" style="width: 16px;"></i> 09:00 – 21:00 (Без выходных)
+                </div>
+                <div class="store-actions">
+                    <a href="tel:+998901234567" class="btn btn-outline" style="padding: 10px;">
+                        <i data-lucide="phone" style="width: 16px;"></i> Звонок
+                    </a>
+                    <button class="btn btn-primary" style="padding: 10px;" onclick="openMap('Юнусабад 4, Ташкент')">
+                        <i data-lucide="navigation" style="width: 16px;"></i> Маршрут
+                    </button>
+                </div>
+            </article>
+        </section>
+
+        <!-- Вкладка: FAQ -->
+        <section id="tab-faq" class="tab-content">
+            <h2 class="section-title" style="margin-bottom: 16px;">Вопросы и ответы</h2>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    Какой график работы магазинов?
+                    <i data-lucide="chevron-down" class="faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Все наши точки работают ежедневно с 09:00 до 20:00 (некоторые филиалы до 21:00) без перерывов и выходных.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    ЕСТЬ ЛИ У ВАС ДОСТАВКА По Ташкенту?
+                    <i data-lucide="chevron-down" class="faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Да, вы можете оформить доставку через Яндекс Доставку или связаться с нами напрямую для формирования заказа.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    Вся ли продукция сертифицирована?
+                    <i data-lucide="chevron-down" class="faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Да, вся наша продукция изготавливается из свежего отборного мяса и проходит строгий ветеринарный и санитарный контроль.
+                </div>
+            </div>
+        </section>
+
+        <!-- Вкладка: КОНТАКТЫ И ОБРАТНАЯ СВЯЗЬ -->
+        <section id="tab-contacts" class="tab-content">
+            <h2 class="section-title" style="margin-bottom: 16px;">Контакты</h2>
+            
+            <div style="background: var(--bg-secondary); border-radius: var(--radius); padding: 16px; margin-bottom: 24px;">
+                <p style="font-size: 14px; margin-bottom: 8px;"><strong>Единый телефон:</strong> +998 (90) 123-45-67</p>
+                <p style="font-size: 14px; margin-bottom: 8px;"><strong>Локация:</strong> г. Ташкент, Узбекистан</p>
+                <p style="font-size: 14px;"><strong>Telegram:</strong> @territoriya_vkusa</p>
+            </div>
+
+            <h2 class="section-title" style="margin-bottom: 12px;">Обратная связь</h2>
+            <form class="feedback-form" onsubmit="sendFeedback(event)">
+                <div class="form-group">
+                    <label>Ваше имя</label>
+                    <input type="text" id="fb-name" class="form-input" placeholder="Иван" required>
+                </div>
+                <div class="form-group">
+                    <label>Сообщение / Отзыв</label>
+                    <textarea id="fb-msg" class="form-textarea" rows="4" placeholder="Напишите ваш отзыв или вопрос..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 8px;">
+                    <i data-lucide="send"></i> Отправить
+                </button>
+            </form>
+        </section>
+
+    </div>
+
+    <!-- Нижняя навигация -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home', this)">
+            <i data-lucide="home"></i>
+            <span>Главная</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('stores', this)">
+            <i data-lucide="store"></i>
+            <span>Магазины</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('faq', this)">
+            <i data-lucide="help-circle"></i>
+            <span>FAQ</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('contacts', this)">
+            <i data-lucide="phone"></i>
+            <span>Контакты</span>
+        </div>
+    </nav>
+
+    <script>
+        // Инициализация Telegram SDK
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
+        // Инициализация векторных иконок
+        lucide.createIcons();
+
+        // Переключение вкладок
+        function switchTab(tabId, element) {
+            // Скрыть все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Показать нужную
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+
+            // Обновить состояние нижней навигации
+            if (element) {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                element.classList.add('active');
+            } else {
+                // Если вызвано из кнопки внутри экрана, подсветить соответствующую иконку
+                const navItems = document.querySelectorAll('.nav-item');
+                const tabIndexMap = { 'home': 0, 'stores': 1, 'faq': 2, 'contacts': 3, 'feedback': 3 };
+                if (tabIndexMap[tabId] !== undefined) {
+                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                    navItems[tabIndexMap[tabId]].classList.add('active');
+                }
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Accordion для FAQ
+        function toggleFaq(element) {
+            element.classList.toggle('active');
+        }
+
+        // Открытие Яндекс Карт / Внешних ссылок
+        function openMap(query) {
+            const url = `https://yandex.ru/maps/?text=${encodeURIComponent(query)}`;
+            if (tg && tg.openLink) {
+                tg.openLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
+        }
+
+        // Отправка формы обратной связи в Telegram-бот
+        function sendFeedback(event) {
+            event.preventDefault();
+            const name = document.getElementById('fb-name').value;
+            const message = document.getElementById('fb-msg').value;
+
+            const payload = {
+                type: 'feedback',
+                name: name,
+                message: message,
+                timestamp: new Date().toISOString()
+            };
+
+            if (tg && tg.sendData) {
+                tg.sendData(JSON.stringify(payload));
+            } else {
+                alert('Спасибо! Ваш отзыв отправлен.');
+            }
+        }
+    </script>
+</body>
+</html>
