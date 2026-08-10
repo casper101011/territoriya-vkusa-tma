@@ -26,7 +26,7 @@ export default {
         }
         const phone = typeof body.phone === 'string' && body.phone.trim() ? body.phone.trim() : '';
         if (telegramId) await env.DB.prepare(`UPDATE users SET phone=?, updated_at=datetime('now') WHERE telegram_id=?`).bind(phone || null, telegramId).run();
-        await env.DB.prepare(`INSERT INTO feedback (telegram_id, username, first_name, phone, message, created_at) VALUES (?, ?, ?, ?, ?, datetime('now'))`).bind(telegramId || null, userUsername || null, userName, phone || null, message).run();
+        await env.DB.prepare(`INSERT INTO feedback (telegram_id, username, name, phone, message, created_at) VALUES (?, ?, ?, ?, ?, datetime('now'))`).bind(telegramId || null, userUsername || null, userName, phone || null, message).run();
         const lines = ['<b>📩 НОВЫЙ ОТЗЫВ</b>', '', `<b>👤 Имя:</b> ${escapeHtml(userName)}`];
         if (userUsername) lines.push(`<b>📱 Telegram:</b> ${escapeHtml(userUsername)}`);
         if (phone) lines.push(`<b>📞 Телефон:</b> ${escapeHtml(phone)}`);
