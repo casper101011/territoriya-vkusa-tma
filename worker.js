@@ -43,20 +43,20 @@ export default {
         }
 
         const text = [
-          '📩 НОВЫЙ ОТЗЫВ',
+          '<b>📩 НОВЫЙ ОТЗЫВ</b>',
           '',
-          `👤 Имя: ${name || 'Не указано'}`,
-          `📞 Телефон: ${phone || 'Не указан'}`,
-          `📱 Telegram: ${userName} (${userUsername})`,
+          `<b>👤 Имя:</b> ${escapeHtml(name || 'Не указано')}`,
+          `<b>📞 Телефон:</b> ${escapeHtml(phone || 'Не указан')}`,
+          `<b>📱 Telegram:</b> ${escapeHtml(userName)} (${escapeHtml(userUsername)})`,
           '',
-          '💬 Отзыв:',
-          message
+          '<b>💬 Отзыв:</b>',
+          `<b>${escapeHtml(message)}</b>`
         ].join('\n');
 
         const telegramResponse = await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: env.CHAT_ID, text })
+          body: JSON.stringify({ chat_id: env.CHAT_ID, text, parse_mode: 'HTML' })
         });
 
         const telegramData = await telegramResponse.json();
@@ -77,9 +77,6 @@ export default {
     if (!contentType.includes('text/html')) return assetResponse;
 
     const html = await assetResponse.text();
-
-    // Do not depend on replacing the original function. Append an override at the end of the document.
-    // This guarantees that the global sendFeedback used by onsubmit is replaced after index.html loads.
     const feedbackOverride = `<script data-feedback-handler="v4">
 window.sendFeedback = async function(event) {
   if (event) event.preventDefault();
@@ -139,7 +136,6 @@ window.sendFeedback = async function(event) {
 </script>`;
 
     const updatedHtml = html.replace('</body>', feedbackOverride + '\n</body>');
-
     const headers = new Headers(assetResponse.headers);
     headers.delete('content-length');
     headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
@@ -152,6 +148,15 @@ window.sendFeedback = async function(event) {
     });
   }
 };
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
 
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
