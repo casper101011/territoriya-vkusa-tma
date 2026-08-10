@@ -42,7 +42,6 @@ export default {
         if (initData) {
           const params = new URLSearchParams(initData);
           const userRaw = params.get('user');
-
           if (userRaw) {
             try {
               const user = JSON.parse(userRaw);
@@ -66,20 +65,14 @@ export default {
         const telegramResponse = await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: env.CHAT_ID,
-            text
-          })
+          body: JSON.stringify({ chat_id: env.CHAT_ID, text })
         });
 
         const telegramData = await telegramResponse.json();
 
         if (!telegramData.ok) {
           console.error('Telegram API error:', JSON.stringify(telegramData));
-          return json({
-            ok: false,
-            error: telegramData.description || 'Telegram не принял сообщение.'
-          }, 502, corsHeaders);
+          return json({ ok: false, error: telegramData.description || 'Telegram не принял сообщение.' }, 502, corsHeaders);
         }
 
         return json({ ok: true }, 200, corsHeaders);
@@ -91,77 +84,82 @@ export default {
 
     const assetResponse = await env.ASSETS.fetch(request);
     const contentType = assetResponse.headers.get('content-type') || '';
-
-    if (!contentType.includes('text/html')) {
-      return assetResponse;
-    }
+    if (!contentType.includes('text/html')) return assetResponse;
 
     const html = await assetResponse.text();
 
-    // Do not modify index.html. Add one small runtime override after the existing page code.
-    // This avoids fragile string replacement and keeps the working design untouched.
     const feedbackOverride = `
 <script>
-window.sendFeedback = async function(event) {
-    event.preventDefault();
+(function () {
+  function showMessage(message) {
+    if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.showAlert === 'function') {
+      window.Telegram.WebApp.showAlert(message);
+    } else {
+      alert(message);
+    }
+  }
+
+  async function submitFeedback(form, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
 
     const nameEl = document.getElementById('fb-name');
     const phoneEl = document.getElementById('fb-phone');
     const messageEl = document.getElementById('fb-msg');
-    const button = event.submitter || document.querySelector('.feedback-form button[type="submit"]');
-
-    const name = nameEl ? nameEl.value.trim() : '';
-    const phone = phoneEl ? phoneEl.value.trim() : '';
+    const button = form.querySelector('button[type="submit"]');
     const message = messageEl ? messageEl.value.trim() : '';
 
     if (!message) {
-        if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert('Напишите отзыв или сообщение.');
-        else alert('Напишите отзыв или сообщение.');
-        return;
+      showMessage('Напишите отзыв или сообщение.');
+      return;
     }
 
     const originalText = button ? button.innerHTML : '';
     if (button) {
-        button.disabled = true;
-        button.textContent = 'Отправка...';
+      button.disabled = true;
+      button.textContent = 'Отправка...';
     }
 
     try {
-        const response = await fetch('/api/send-feedback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name,
-                phone,
-                message,
-                initData: window.Telegram?.WebApp?.initData || ''
-            })
-        });
+      const response = await fetch('/api/send-feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: nameEl ? nameEl.value.trim() : '',
+          phone: phoneEl ? phoneEl.value.trim() : '',
+          message,
+          initData: window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData || '' : ''
+        })
+      });
 
-        const result = await response.json();
+      const result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(result.error || 'Ошибка отправки');
 
-        if (!response.ok || !result.ok) {
-            throw new Error(result.error || 'Ошибка отправки');
-        }
-
-        if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert('Спасибо! Ваш отзыв отправлен.');
-        else alert('Спасибо! Ваш отзыв отправлен.');
-
-        if (nameEl) nameEl.value = '';
-        if (phoneEl) phoneEl.value = '';
-        if (messageEl) messageEl.value = '';
+      showMessage('Спасибо! Ваш отзыв отправлен.');
+      if (nameEl) nameEl.value = '';
+      if (phoneEl) phoneEl.value = '';
+      if (messageEl) messageEl.value = '';
     } catch (error) {
-        console.error('Feedback error:', error);
-        if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(error.message || 'Не удалось отправить отзыв.');
-        else alert(error.message || 'Не удалось отправить отзыв.');
+      console.error('Feedback error:', error);
+      showMessage(error.message || 'Не удалось отправить отзыв.');
     } finally {
-        if (button) {
-            button.innerHTML = originalText;
-            button.disabled = false;
-            if (window.lucide) window.lucide.createIcons();
-        }
+      if (button) {
+        button.disabled = false;
+        button.innerHTML = originalText;
+        if (window.lucide) window.lucide.createIcons();
+      }
     }
-};
+  }
+
+  document.addEventListener('submit', function (event) {
+    const form = event.target;
+    if (form && form.classList && form.classList.contains('feedback-form')) {
+      submitFeedback(form, event);
+    }
+  }, true);
+})();
 </script>`;
 
     const updatedHtml = html.includes('</body>')
