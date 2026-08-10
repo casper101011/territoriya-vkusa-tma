@@ -23,15 +23,9 @@ export default {
         const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
         const message = typeof body.message === 'string' ? body.message.trim() : '';
 
-        if (!message) {
-          return json({ ok: false, error: 'Введите текст отзыва.' }, 400, corsHeaders);
-        }
-        if (!env.BOT_TOKEN) {
-          return json({ ok: false, error: 'BOT_TOKEN отсутствует в Secrets Cloudflare.' }, 500, corsHeaders);
-        }
-        if (!env.CHAT_ID) {
-          return json({ ok: false, error: 'CHAT_ID отсутствует в Secrets Cloudflare.' }, 500, corsHeaders);
-        }
+        if (!message) return json({ ok: false, error: 'Введите текст отзыва.' }, 400, corsHeaders);
+        if (!env.BOT_TOKEN) return json({ ok: false, error: 'BOT_TOKEN отсутствует в Secrets Cloudflare.' }, 500, corsHeaders);
+        if (!env.CHAT_ID) return json({ ok: false, error: 'CHAT_ID отсутствует в Secrets Cloudflare.' }, 500, corsHeaders);
 
         let userName = 'Не определено';
         let userUsername = 'нет username';
@@ -84,75 +78,72 @@ export default {
 
     const html = await assetResponse.text();
 
-    // Keep index.html unchanged. Replace only the existing feedback function in the served response.
-    const newFunction = `function sendFeedback(event) {
-            event.preventDefault();
+    // Do not depend on replacing the original function. Append an override at the end of the document.
+    // This guarantees that the global sendFeedback used by onsubmit is replaced after index.html loads.
+    const feedbackOverride = `<script data-feedback-handler="v4">
+window.sendFeedback = async function(event) {
+  if (event) event.preventDefault();
 
-            const name = document.getElementById('fb-name').value.trim();
-            const phone = document.getElementById('fb-phone').value.trim();
-            const message = document.getElementById('fb-msg').value.trim();
-            const button = event.submitter || event.target.querySelector('button[type="submit"]');
+  const name = document.getElementById('fb-name')?.value.trim() || '';
+  const phone = document.getElementById('fb-phone')?.value.trim() || '';
+  const message = document.getElementById('fb-msg')?.value.trim() || '';
+  const button = event?.submitter || document.querySelector('.feedback-form button[type="submit"]');
 
-            if (!message) {
-                if (tg && tg.showAlert) tg.showAlert('Напишите отзыв или сообщение.');
-                else alert('Напишите отзыв или сообщение.');
-                return;
-            }
+  if (!message) {
+    if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert('Напишите отзыв или сообщение.');
+    else alert('Напишите отзыв или сообщение.');
+    return false;
+  }
 
-            const originalText = button ? button.innerHTML : '';
-            if (button) {
-                button.disabled = true;
-                button.textContent = 'Отправка...';
-            }
+  const originalText = button ? button.innerHTML : '';
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Отправка...';
+  }
 
-            fetch('/api/send-feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name,
-                    phone,
-                    message,
-                    initData: tg && tg.initData ? tg.initData : ''
-                })
-            })
-            .then(async response => {
-                const result = await response.json();
-                if (!response.ok || !result.ok) {
-                    throw new Error(result.error || 'Ошибка отправки');
-                }
-                return result;
-            })
-            .then(() => {
-                if (tg && tg.showAlert) tg.showAlert('Спасибо! Ваш отзыв отправлен.');
-                else alert('Спасибо! Ваш отзыв отправлен.');
-                document.getElementById('fb-name').value = '';
-                document.getElementById('fb-phone').value = '';
-                document.getElementById('fb-msg').value = '';
-            })
-            .catch(error => {
-                console.error('Feedback error:', error);
-                if (tg && tg.showAlert) tg.showAlert(error.message || 'Не удалось отправить отзыв.');
-                else alert(error.message || 'Не удалось отправить отзыв.');
-            })
-            .finally(() => {
-                if (button) {
-                    button.disabled = false;
-                    button.innerHTML = originalText;
-                    if (window.lucide) window.lucide.createIcons();
-                }
-            });
-        }`;
+  try {
+    const response = await fetch('/api/send-feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        phone,
+        message,
+        initData: window.Telegram?.WebApp?.initData || ''
+      })
+    });
 
-    // The existing function is immediately before </script>. Replace that exact function block,
-    // regardless of minor whitespace differences in index.html.
-    const functionPattern = /function sendFeedback\(event\)\s*\{[\s\S]*?\n\s*\}\s*(?=<\/script>)/;
-    const updatedHtml = functionPattern.test(html)
-      ? html.replace(functionPattern, newFunction + '\n        ')
-      : html;
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.error || 'Ошибка отправки');
+
+    if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert('Спасибо! Ваш отзыв отправлен.');
+    else alert('Спасибо! Ваш отзыв отправлен.');
+
+    document.getElementById('fb-name').value = '';
+    document.getElementById('fb-phone').value = '';
+    document.getElementById('fb-msg').value = '';
+  } catch (error) {
+    console.error('Feedback error:', error);
+    if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(error.message || 'Не удалось отправить отзыв.');
+    else alert(error.message || 'Не удалось отправить отзыв.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.innerHTML = originalText;
+      if (window.lucide) window.lucide.createIcons();
+    }
+  }
+
+  return false;
+};
+</script>`;
+
+    const updatedHtml = html.replace('</body>', feedbackOverride + '\n</body>');
 
     const headers = new Headers(assetResponse.headers);
     headers.delete('content-length');
     headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    headers.set('X-Feedback-Handler', 'v4');
 
     return new Response(updatedHtml, {
       status: assetResponse.status,
