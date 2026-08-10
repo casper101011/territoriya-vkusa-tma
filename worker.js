@@ -19,8 +19,6 @@ export default {
 
       try {
         const body = await request.json();
-        const name = typeof body.name === 'string' ? body.name.trim() : '';
-        const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
         const message = typeof body.message === 'string' ? body.message.trim() : '';
 
         if (!message) return json({ ok: false, error: 'Введите текст отзыва.' }, 400, corsHeaders);
@@ -28,30 +26,36 @@ export default {
         if (!env.CHAT_ID) return json({ ok: false, error: 'CHAT_ID отсутствует в Secrets Cloudflare.' }, 500, corsHeaders);
 
         let userName = 'Не определено';
-        let userUsername = 'нет username';
+        let userUsername = '';
+        let telegramId = '';
         const initData = typeof body.initData === 'string' ? body.initData : '';
+
         if (initData) {
           const params = new URLSearchParams(initData);
           const userRaw = params.get('user');
           if (userRaw) {
             try {
               const user = JSON.parse(userRaw);
+              telegramId = user.id ? String(user.id) : '';
               userName = [user.first_name, user.last_name].filter(Boolean).join(' ') || 'Не определено';
-              userUsername = user.username ? `@${user.username}` : 'нет username';
+              userUsername = user.username ? `@${user.username}` : '';
             } catch (_) {}
           }
         }
 
-        const text = [
+        const lines = [
           '<b>📩 НОВЫЙ ОТЗЫВ</b>',
           '',
-          `<b>👤 Имя:</b> ${escapeHtml(name || 'Не указано')}`,
-          `<b>📞 Телефон:</b> ${escapeHtml(phone || 'Не указан')}`,
-          `<b>📱 Telegram:</b> ${escapeHtml(userName)} (${escapeHtml(userUsername)})`,
-          '',
-          '<b>💬 Отзыв:</b>',
-          `<b>${escapeHtml(message)}</b>`
-        ].join('\n');
+          `<b>👤 Имя:</b> ${escapeHtml(userName)}`
+        ];
+
+        if (userUsername) lines.push(`<b>📱 Telegram:</b> ${escapeHtml(userUsername)}`);
+        if (body.phone) lines.push(`<b>📞 Телефон:</b> ${escapeHtml(String(body.phone))}`);
+        if (telegramId) lines.push(`<b>🆔 Telegram ID:</b> ${escapeHtml(telegramId)}`);
+
+        lines.push('', '<b>💬 Отзыв:</b>', `<b>${escapeHtml(message)}</b>`);
+
+        const text = lines.join('\n');
 
         const telegramResponse = await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/sendMessage`, {
           method: 'POST',
@@ -77,17 +81,16 @@ export default {
     if (!contentType.includes('text/html')) return assetResponse;
 
     const html = await assetResponse.text();
-    const feedbackOverride = `<script data-feedback-handler="v4">
+    const feedbackOverride = `<script data-feedback-handler="v5">
 window.sendFeedback = async function(event) {
   if (event) event.preventDefault();
 
-  const name = document.getElementById('fb-name')?.value.trim() || '';
-  const phone = document.getElementById('fb-phone')?.value.trim() || '';
   const message = document.getElementById('fb-msg')?.value.trim() || '';
   const button = event?.submitter || document.querySelector('.feedback-form button[type="submit"]');
+  const tg = window.Telegram?.WebApp;
 
   if (!message) {
-    if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert('Напишите отзыв или сообщение.');
+    if (tg?.showAlert) tg.showAlert('Напишите отзыв или сообщение.');
     else alert('Напишите отзыв или сообщение.');
     return false;
   }
@@ -103,25 +106,21 @@ window.sendFeedback = async function(event) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name,
-        phone,
         message,
-        initData: window.Telegram?.WebApp?.initData || ''
+        initData: tg?.initData || ''
       })
     });
 
     const result = await response.json();
     if (!response.ok || !result.ok) throw new Error(result.error || 'Ошибка отправки');
 
-    if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert('Спасибо! Ваш отзыв отправлен.');
+    if (tg?.showAlert) tg.showAlert('Спасибо! Ваш отзыв отправлен.');
     else alert('Спасибо! Ваш отзыв отправлен.');
 
-    document.getElementById('fb-name').value = '';
-    document.getElementById('fb-phone').value = '';
     document.getElementById('fb-msg').value = '';
   } catch (error) {
     console.error('Feedback error:', error);
-    if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(error.message || 'Не удалось отправить отзыв.');
+    if (tg?.showAlert) tg.showAlert(error.message || 'Не удалось отправить отзыв.');
     else alert(error.message || 'Не удалось отправить отзыв.');
   } finally {
     if (button) {
@@ -133,13 +132,39 @@ window.sendFeedback = async function(event) {
 
   return false;
 };
+
+(function setupContactRequest() {
+  const tg = window.Telegram?.WebApp;
+  const form = document.querySelector('.feedback-form');
+  if (!form || !tg?.requestContact) return;
+
+  const nameGroup = document.getElementById('fb-name')?.closest('.form-group');
+  const phoneGroup = document.getElementById('fb-phone')?.closest('.form-group');
+  if (nameGroup) nameGroup.remove();
+  if (phoneGroup) phoneGroup.remove();
+
+  const notice = document.createElement('div');
+  notice.className = 'contact-card';
+  notice.innerHTML = '<div style="font-size:13px;color:var(--text-gray);margin-bottom:12px">Чтобы мы могли связаться с вами по отзыву, поделитесь номером телефона один раз</div><button type="button" class="btn btn-outline" id="share-phone-btn">📱 Поделиться номером</button>';
+  form.insertBefore(notice, form.firstChild);
+
+  const button = document.getElementById('share-phone-btn');
+  button.addEventListener('click', () => {
+    tg.requestContact((shared) => {
+      if (shared) {
+        button.textContent = '✓ Номер передан Telegram';
+        button.disabled = true;
+      }
+    });
+  });
+})();
 </script>`;
 
     const updatedHtml = html.replace('</body>', feedbackOverride + '\n</body>');
     const headers = new Headers(assetResponse.headers);
     headers.delete('content-length');
     headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
-    headers.set('X-Feedback-Handler', 'v4');
+    headers.set('X-Feedback-Handler', 'v5');
 
     return new Response(updatedHtml, {
       status: assetResponse.status,
