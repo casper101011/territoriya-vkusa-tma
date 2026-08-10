@@ -20,25 +20,29 @@ export default {
         let firstName = '';
         let lastName = '';
 
+        // Основной источник — Telegram initData. Запасной — user, переданный Mini App.
         const initData = typeof body.initData === 'string' ? body.initData : '';
+        let telegramUser = null;
         if (initData) {
           const userRaw = new URLSearchParams(initData).get('user');
           if (userRaw) {
-            try {
-              const user = JSON.parse(userRaw);
-              telegramId = user.id ? String(user.id) : '';
-              firstName = user.first_name || '';
-              lastName = user.last_name || '';
-              userName = [firstName, lastName].filter(Boolean).join(' ') || 'Не определено';
-              userUsername = user.username ? `@${user.username}` : '';
-            } catch (_) {}
+            try { telegramUser = JSON.parse(userRaw); } catch (_) {}
           }
+        }
+        if (!telegramUser && body.user && typeof body.user === 'object') {
+          telegramUser = body.user;
+        }
+
+        if (telegramUser) {
+          telegramId = telegramUser.id ? String(telegramUser.id) : '';
+          firstName = telegramUser.first_name || '';
+          lastName = telegramUser.last_name || '';
+          userName = [firstName, lastName].filter(Boolean).join(' ') || 'Не определено';
+          userUsername = telegramUser.username ? `@${telegramUser.username}` : '';
         }
 
         const phone = typeof body.phone === 'string' && body.phone.trim() ? body.phone.trim() : '';
 
-        // D1 не должен блокировать отправку отзыва в Telegram.
-        // Если таблицы ещё не применены или произошла ошибка базы, отзыв всё равно уйдёт.
         let dbError = '';
         if (env.DB) {
           try {
@@ -83,14 +87,15 @@ export default {
     const contentType = assetResponse.headers.get('content-type') || '';
     if (!contentType.includes('text/html')) return assetResponse;
     const html = await assetResponse.text();
-    const feedbackOverride = `<script data-feedback-handler="v7">
+    const feedbackOverride = `<script data-feedback-handler="v8">
 window.sendFeedback = async function(event) {
   if (event) event.preventDefault();
   const message = document.getElementById('fb-msg')?.value.trim() || '', button = event?.submitter || document.querySelector('.feedback-form button[type="submit"]'), tg = window.Telegram?.WebApp;
   if (!message) { if (tg?.showAlert) tg.showAlert('Напишите отзыв или сообщение.'); else alert('Напишите отзыв или сообщение.'); return false; }
   const originalText = button ? button.innerHTML : ''; if (button) { button.disabled = true; button.textContent = 'Отправка...'; }
   try {
-    const response = await fetch('/api/send-feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message, initData: tg?.initData || '' }) });
+    const telegramUser = tg?.initDataUnsafe?.user || null;
+    const response = await fetch('/api/send-feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message, initData: tg?.initData || '', user: telegramUser }) });
     const result = await response.json(); if (!response.ok || !result.ok) throw new Error(result.error || 'Ошибка отправки');
     if (tg?.showAlert) tg.showAlert('Спасибо! Ваш отзыв отправлен.'); else alert('Спасибо! Ваш отзыв отправлен.'); document.getElementById('fb-msg').value = '';
   } catch (error) { console.error('Feedback error:', error); if (tg?.showAlert) tg.showAlert(error.message || 'Не удалось отправить отзыв.'); else alert(error.message || 'Не удалось отправить отзыв.'); }
@@ -104,7 +109,7 @@ window.sendFeedback = async function(event) {
 })();
 </script>`;
     const updatedHtml = html.replace('</body>', feedbackOverride + '\n</body>');
-    const headers = new Headers(assetResponse.headers); headers.delete('content-length'); headers.set('Cache-Control', 'no-store, no-cache, must-revalidate'); headers.set('X-Feedback-Handler', 'v7');
+    const headers = new Headers(assetResponse.headers); headers.delete('content-length'); headers.set('Cache-Control', 'no-store, no-cache, must-revalidate'); headers.set('X-Feedback-Handler', 'v8');
     return new Response(updatedHtml, { status: assetResponse.status, statusText: assetResponse.statusText, headers });
   }
 };
