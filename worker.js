@@ -28,11 +28,11 @@ export default {
         }
 
         if (!env.BOT_TOKEN) {
-          return json({ ok: false, error: 'Сервер ещё не настроен.' }, 500, corsHeaders);
+          return json({ ok: false, error: 'Сервер ещё не настроен: BOT_TOKEN отсутствует.' }, 500, corsHeaders);
         }
 
         if (!env.CHAT_ID) {
-          return json({ ok: false, error: 'CHAT_ID не настроен.' }, 500, corsHeaders);
+          return json({ ok: false, error: 'Сервер ещё не настроен: CHAT_ID отсутствует.' }, 500, corsHeaders);
         }
 
         let userName = 'Не определено';
@@ -75,6 +75,7 @@ export default {
         const telegramData = await telegramResponse.json();
 
         if (!telegramData.ok) {
+          console.error('Telegram API error:', JSON.stringify(telegramData));
           return json({
             ok: false,
             error: telegramData.description || 'Telegram не принял сообщение.'
@@ -84,7 +85,7 @@ export default {
         return json({ ok: true }, 200, corsHeaders);
       } catch (error) {
         console.error('Feedback error:', error?.stack || error);
-        return json({ ok: false, error: 'Не удалось отправить отзыв. Попробуйте ещё раз.' }, 500, corsHeaders);
+        return json({ ok: false, error: error?.message || 'Ошибка сервера.' }, 500, corsHeaders);
       }
     }
 
@@ -97,91 +98,75 @@ export default {
 
     const html = await assetResponse.text();
 
-    const oldFunction = `function sendFeedback(event) {
-            event.preventDefault();
-            const name = document.getElementById('fb-name').value;
-            const phone = document.getElementById('fb-phone').value;
-            const message = document.getElementById('fb-msg').value;
+    // Do not modify index.html. Add one small runtime override after the existing page code.
+    // This avoids fragile string replacement and keeps the working design untouched.
+    const feedbackOverride = `
+<script>
+window.sendFeedback = async function(event) {
+    event.preventDefault();
 
-            const payload = {
-                type: 'feedback',
-                name: name || 'Не указано',
-                phone: phone || 'Не указан',
-                message: message,
-                date: new Date().toLocaleDateString('ru-RU')
-            };
+    const nameEl = document.getElementById('fb-name');
+    const phoneEl = document.getElementById('fb-phone');
+    const messageEl = document.getElementById('fb-msg');
+    const button = event.submitter || document.querySelector('.feedback-form button[type="submit"]');
 
-            if (tg && tg.sendData) {
-                tg.sendData(JSON.stringify(payload));
-            } else {
-                alert('Спасибо за отзыв! Сообщение отправлено.');
-            }
-        }`;
+    const name = nameEl ? nameEl.value.trim() : '';
+    const phone = phoneEl ? phoneEl.value.trim() : '';
+    const message = messageEl ? messageEl.value.trim() : '';
 
-    const newFunction = `async function sendFeedback(event) {
-            event.preventDefault();
+    if (!message) {
+        if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert('Напишите отзыв или сообщение.');
+        else alert('Напишите отзыв или сообщение.');
+        return;
+    }
 
-            const nameEl = document.getElementById('fb-name');
-            const phoneEl = document.getElementById('fb-phone');
-            const messageEl = document.getElementById('fb-msg');
-            const button = event.submitter || document.querySelector('.feedback-form button[type="submit"]');
+    const originalText = button ? button.innerHTML : '';
+    if (button) {
+        button.disabled = true;
+        button.textContent = 'Отправка...';
+    }
 
-            const name = nameEl ? nameEl.value.trim() : '';
-            const phone = phoneEl ? phoneEl.value.trim() : '';
-            const message = messageEl ? messageEl.value.trim() : '';
+    try {
+        const response = await fetch('/api/send-feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name,
+                phone,
+                message,
+                initData: window.Telegram?.WebApp?.initData || ''
+            })
+        });
 
-            if (!message) {
-                if (tg && tg.showAlert) tg.showAlert('Напишите отзыв или сообщение.');
-                else alert('Напишите отзыв или сообщение.');
-                return;
-            }
+        const result = await response.json();
 
-            const originalText = button ? button.innerHTML : '';
-            if (button) {
-                button.disabled = true;
-                button.textContent = 'Отправка...';
-            }
+        if (!response.ok || !result.ok) {
+            throw new Error(result.error || 'Ошибка отправки');
+        }
 
-            try {
-                const response = await fetch('/api/send-feedback', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name,
-                        phone,
-                        message,
-                        initData: tg ? (tg.initData || '') : ''
-                    })
-                });
+        if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert('Спасибо! Ваш отзыв отправлен.');
+        else alert('Спасибо! Ваш отзыв отправлен.');
 
-                const result = await response.json();
+        if (nameEl) nameEl.value = '';
+        if (phoneEl) phoneEl.value = '';
+        if (messageEl) messageEl.value = '';
+    } catch (error) {
+        console.error('Feedback error:', error);
+        if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(error.message || 'Не удалось отправить отзыв.');
+        else alert(error.message || 'Не удалось отправить отзыв.');
+    } finally {
+        if (button) {
+            button.innerHTML = originalText;
+            button.disabled = false;
+            if (window.lucide) window.lucide.createIcons();
+        }
+    }
+};
+</script>`;
 
-                if (!response.ok || !result.ok) {
-                    throw new Error(result.error || 'Ошибка отправки');
-                }
-
-                if (tg && tg.showAlert) tg.showAlert('Спасибо! Ваш отзыв отправлен.');
-                else alert('Спасибо! Ваш отзыв отправлен.');
-
-                if (nameEl) nameEl.value = '';
-                if (phoneEl) phoneEl.value = '';
-                if (messageEl) messageEl.value = '';
-            } catch (error) {
-                console.error('Feedback error:', error);
-                if (tg && tg.showAlert) tg.showAlert(error.message || 'Не удалось отправить отзыв. Попробуйте ещё раз.');
-                else alert(error.message || 'Не удалось отправить отзыв. Попробуйте ещё раз.');
-            } finally {
-                if (button) {
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                    if (window.lucide) window.lucide.createIcons();
-                }
-            }
-        }`;
-
-    const updatedHtml = html.includes(oldFunction)
-      ? html.replace(oldFunction, newFunction)
-      : html;
+    const updatedHtml = html.includes('</body>')
+      ? html.replace('</body>', feedbackOverride + '\n</body>')
+      : html + feedbackOverride;
 
     const headers = new Headers(assetResponse.headers);
     headers.delete('content-length');
